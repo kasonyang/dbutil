@@ -30,7 +30,7 @@ public class DBConnection {
         }
     }
 
-    public List<Map<String, Object>> executeAndGetGeneratedKeys(String sql, Object... params) throws SQLException {
+    public Collection<Map<String, Object>> executeAndGetGeneratedKeys(String sql, Object... params) throws SQLException {
         if (params.length > 0) {
             try(PreparedStatement stmt = prepareStatement(sql, params, true)){
                 stmt.executeUpdate();
@@ -45,11 +45,11 @@ public class DBConnection {
         }
     }
 
-    public List<Map<String, Object>> query(String sql) throws SQLException {
+    public Collection<Map<String, Object>> query(String sql) throws SQLException {
         return this.query(sql, new Object[0]);
     }
 
-    public List<Map<String, Object>> query(String sql, Object... params) throws SQLException {
+    public Collection<Map<String, Object>> query(String sql, Object... params) throws SQLException {
         ResultSet rs;
         if (params.length > 0) {
             rs = prepareStatement(sql, params, false).executeQuery();
