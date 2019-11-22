@@ -14,13 +14,46 @@ public class DBConnection {
         this.jdbc = jdbc;
     }
 
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        jdbc.setAutoCommit(autoCommit);
+    }
+
+    public boolean getAutoCommit() throws SQLException {
+        return jdbc.getAutoCommit();
+    }
+
+    public void commit() throws SQLException {
+        jdbc.commit();
+    }
+
+    public void rollback() throws SQLException {
+        jdbc.rollback();
+    }
+
+    public void close() throws SQLException {
+        jdbc.close();
+    }
+
+    public boolean isClosed() throws SQLException {
+        return jdbc.isClosed();
+    }
+
+
+    public void setTransactionIsolation(int level) throws SQLException {
+        jdbc.setTransactionIsolation(level);
+    }
+
+    public int getTransactionIsolation() throws SQLException {
+        return jdbc.getTransactionIsolation();
+    }
+
     public int execute(String sql) throws SQLException {
         return execute(sql, new Object[0]);
     }
 
     public int execute(String sql, Object... params) throws SQLException {
         if (params.length > 0) {
-            try(PreparedStatement stmt = prepareStatement(sql, params, false)){
+            try (PreparedStatement stmt = prepareStatement(sql, params, false)) {
                 return stmt.executeUpdate();
             }
         } else {
@@ -32,7 +65,7 @@ public class DBConnection {
 
     public List<Map<String, Object>> executeAndGetGeneratedKeys(String sql, Object... params) throws SQLException {
         if (params.length > 0) {
-            try(PreparedStatement stmt = prepareStatement(sql, params, true)){
+            try (PreparedStatement stmt = prepareStatement(sql, params, true)) {
                 stmt.executeUpdate();
                 ResultSet rs = stmt.getGeneratedKeys();
                 return this.formatResultSet(rs);
