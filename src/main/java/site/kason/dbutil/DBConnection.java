@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * @author KasonYang
  */
-public class DBConnection {
+public class DBConnection implements AutoCloseable {
 
     private Connection jdbc;
 
@@ -30,6 +30,7 @@ public class DBConnection {
         jdbc.rollback();
     }
 
+    @Override
     public void close() throws SQLException {
         jdbc.close();
     }
