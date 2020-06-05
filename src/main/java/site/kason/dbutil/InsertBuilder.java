@@ -1,0 +1,42 @@
+package site.kason.dbutil;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * @author KasonYang
+ */
+public class InsertBuilder {
+
+    private Map<String, Object> fieldValues = new LinkedHashMap<>();
+
+    public InsertBuilder set(String column, Object value) {
+        fieldValues.put(column, value);
+        return this;
+    }
+
+    public InsertBuilder set(Map<String, Object> fieldValues) {
+        this.fieldValues.putAll(fieldValues);
+        return this;
+    }
+
+    public String buildSql(String table) {
+        if (fieldValues.isEmpty()) {
+            throw new IllegalStateException("field values is empty");
+        }
+        String fields = "(" + String.join(",", fieldValues.keySet()) + ")";
+        char[] values = new char[fieldValues.size() * 2 + 1];
+        values[0] = '(';
+        for (int i = 0; i < values.length; i++) {
+            values[i] = '?';
+            values[i + 1] = ',';
+        }
+        values[values.length-1] = ')';
+        return "insert into " + table + fields + "values" + new String(values);
+    }
+
+    public Object[] buildBindings() {
+        return fieldValues.values().toArray();
+    }
+
+}

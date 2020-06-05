@@ -2,6 +2,7 @@ package site.kason.dbutil;
 
 import java.sql.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author KasonYang
@@ -93,6 +94,103 @@ public class DBConnection implements AutoCloseable {
         List<Map<String, Object>> list = formatResultSet(rs);
         rs.getStatement().close();
         return list;
+    }
+
+    public List<Map<String, Object>> select(String table, SelectBuilder selectBuilder) throws SQLException {
+        return query(selectBuilder.buildSql(table), selectBuilder.buildBindings());
+    }
+
+    public List<Map<String, Object>> select(String table, Consumer<SelectBuilder> selectBuilderConsumer) throws SQLException {
+        SelectBuilder sb = new SelectBuilder();
+        selectBuilderConsumer.accept(sb);
+        return select(table, sb);
+    }
+
+    public Map<String, Object> selectOne(String table, SelectBuilder selectBuilder) throws SQLException {
+        List<Map<String, Object>> list = query(table, selectBuilder);
+        if (list.isEmpty()) {
+            return null;
+        } else if (list.size() == 1) {
+            return list.get(0);
+        } else {
+            throw new IllegalArgumentException("unexpcted result size:" + list.size());
+        }
+    }
+
+    public Map<String, Object> selectOne(String table, Consumer<SelectBuilder> selectBuilderConsumer) throws SQLException {
+        SelectBuilder sb = new SelectBuilder();
+        selectBuilderConsumer.accept(sb);
+        return selectOne(table, sb);
+    }
+
+    public long count(String table, SelectBuilder selectBuilder) throws SQLException {
+        List<Map<String, Object>> res = query(selectBuilder.buildCount(table), selectBuilder.buildBindings());
+        Object count = res.get(0).get("count(*)");
+        if (count instanceof Integer) {
+            return ((Integer) count).longValue();
+        }
+        return (Long) count;
+    }
+
+    public long count(String table, Consumer<SelectBuilder> selectBuilderConsumer) throws SQLException {
+        SelectBuilder sb = new SelectBuilder();
+        selectBuilderConsumer.accept(sb);
+        return count(table, sb);
+    }
+
+    public int update(String table, UpdateBuilder updateBuilder) throws SQLException {
+        return execute(updateBuilder.buildSql(table), updateBuilder.buildBindings());
+    }
+
+    public int update(String table, Consumer<UpdateBuilder> updateBuilderConsumer) throws SQLException {
+        UpdateBuilder ub = new UpdateBuilder();
+        updateBuilderConsumer.accept(ub);
+        return update(table, ub);
+    }
+
+    public void insert(String table, InsertBuilder insertBuilder) throws SQLException {
+        int result = execute(insertBuilder.buildSql(table), insertBuilder.buildBindings());
+        assert result == 1;
+    }
+
+    public void insert(String table, Consumer<InsertBuilder> insertBuilderConsumer) throws SQLException {
+        InsertBuilder ib = new InsertBuilder();
+        insertBuilderConsumer.accept(ib);
+        insert(table, ib);
+    }
+
+    public void insert(String table, Map<String,Object> fieldValues) throws SQLException {
+        InsertBuilder ib = new InsertBuilder();
+        ib.set(fieldValues);
+        insert(table, ib);
+    }
+
+    public Map<String,Object> insertAndGetGeneratedKeys(String table, InsertBuilder insertBuilder) throws SQLException {
+        List<Map<String, Object>> result = executeAndGetGeneratedKeys(insertBuilder.buildSql(table), insertBuilder.buildBindings());
+        assert result.size() == 1;
+        return result.get(0);
+    }
+
+    public Map<String, Object> insertAndGetGeneratedKeys(String table, Consumer<InsertBuilder> insertBuilderConsumer) throws SQLException {
+        InsertBuilder ib = new InsertBuilder();
+        insertBuilderConsumer.accept(ib);
+        return insertAndGetGeneratedKeys(table, ib);
+    }
+
+    public Map<String, Object> insertAndGetGeneratedKeys(String table, Map<String,Object> fieldValues) throws SQLException {
+        InsertBuilder ib = new InsertBuilder();
+        ib.set(fieldValues);
+        return insertAndGetGeneratedKeys(table, ib);
+    }
+
+    public int delete(String table, DeleteBuilder deleteBuilder) throws SQLException {
+        return execute(deleteBuilder.buildSql(table), deleteBuilder.buildBindings());
+    }
+
+    public int delete(String table, Consumer<DeleteBuilder> deleteBuilderConsumer) throws SQLException {
+        DeleteBuilder db = new DeleteBuilder();
+        deleteBuilderConsumer.accept(db);
+        return delete(table, db);
     }
 
     private List<Map<String, Object>> formatResultSet(ResultSet rs) throws SQLException {
