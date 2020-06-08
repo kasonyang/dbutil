@@ -107,13 +107,13 @@ public class DBConnection implements AutoCloseable {
     }
 
     public Map<String, Object> selectOne(String table, SelectBuilder selectBuilder) throws SQLException {
-        List<Map<String, Object>> list = query(table, selectBuilder);
+        List<Map<String, Object>> list = select(table, selectBuilder);
         if (list.isEmpty()) {
             return null;
         } else if (list.size() == 1) {
             return list.get(0);
         } else {
-            throw new IllegalArgumentException("unexpcted result size:" + list.size());
+            throw new IllegalArgumentException("unexpected result size:" + list.size());
         }
     }
 

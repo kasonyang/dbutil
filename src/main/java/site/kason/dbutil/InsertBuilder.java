@@ -27,12 +27,12 @@ public class InsertBuilder {
         String fields = "(" + String.join(",", fieldValues.keySet()) + ")";
         char[] values = new char[fieldValues.size() * 2 + 1];
         values[0] = '(';
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 1; i < values.length; i += 2) {
             values[i] = '?';
             values[i + 1] = ',';
         }
         values[values.length-1] = ')';
-        return "insert into " + table + fields + "values" + new String(values);
+        return "insert into " + table + fields + " values " + new String(values);
     }
 
     public Object[] buildBindings() {
