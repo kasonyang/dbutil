@@ -106,6 +106,14 @@ public class DBConnection implements AutoCloseable {
         return select(table, sb);
     }
 
+    public List<Map<String, Object>> select(String table, Map<String,Object> conditions) throws SQLException {
+        SelectBuilder sb = new SelectBuilder();
+        for (Map.Entry<String,Object> e : conditions.entrySet()) {
+            sb.eq(e.getKey(), e.getValue());
+        }
+        return select(table, sb);
+    }
+
     public Map<String, Object> selectOne(String table, SelectBuilder selectBuilder) throws SQLException {
         List<Map<String, Object>> list = select(table, selectBuilder);
         if (list.isEmpty()) {
@@ -120,6 +128,14 @@ public class DBConnection implements AutoCloseable {
     public Map<String, Object> selectOne(String table, Consumer<SelectBuilder> selectBuilderConsumer) throws SQLException {
         SelectBuilder sb = new SelectBuilder();
         selectBuilderConsumer.accept(sb);
+        return selectOne(table, sb);
+    }
+
+    public Map<String, Object> selectOne(String table, Map<String, Object> conditions) throws SQLException {
+        SelectBuilder sb = new SelectBuilder();
+        for (Map.Entry<String, Object> e : conditions.entrySet()) {
+            sb.eq(e.getKey(), e.getValue());
+        }
         return selectOne(table, sb);
     }
 
