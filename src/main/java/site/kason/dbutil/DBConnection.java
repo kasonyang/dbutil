@@ -183,6 +183,19 @@ public class DBConnection implements AutoCloseable {
         return insertAndGetGeneratedKeys(table, ib);
     }
 
+    public Object insertAndGetKey(String table, InsertBuilder insertBuilder) throws SQLException {
+        return insertAndGetGeneratedKeys(table, insertBuilder).values().iterator().next();
+    }
+
+    public Object insertAndGetKey(String table, Consumer<InsertBuilder> insertBuilderConsumer) throws SQLException {
+        return insertAndGetGeneratedKeys(table, insertBuilderConsumer).values().iterator().next();
+    }
+
+    public Object insertAndGetKey(String table, Map<String,Object> fieldValues) throws SQLException {
+        return insertAndGetGeneratedKeys(table, fieldValues).values().iterator().next();
+    }
+
+
     public int delete(String table, DeleteBuilder deleteBuilder) throws SQLException {
         return execute(deleteBuilder.buildSql(table), deleteBuilder.buildBindings());
     }
@@ -199,10 +212,10 @@ public class DBConnection implements AutoCloseable {
         int cols = md.getColumnCount();
         String[] colNames = new String[cols];
         for (int i = 0; i < cols; i++) {
-            colNames[i] = md.getColumnLabel(i + 1);
+            colNames[i] = md.getColumnName(i + 1);
         }
         while (rs.next()) {
-            HashMap<String, Object> it = new HashMap<>();
+            Map<String, Object> it = new LinkedHashMap<>();
             for (int i = 0; i < cols; i++) {
                 it.put(colNames[i], rs.getObject(i + 1));
             }
