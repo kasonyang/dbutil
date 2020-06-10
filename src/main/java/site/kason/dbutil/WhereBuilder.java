@@ -21,12 +21,15 @@ public class WhereBuilder {
         return addSeg(AND, column + "=?", value);
     }
 
-    public WhereBuilder eq(String column, Collection<Object> values) {
+    public WhereBuilder in(String column, Collection<Object> values) {
+        if (values.isEmpty()) {
+            throw new IllegalArgumentException("empty collection");
+        }
         String seg = column + " in (" + values.stream().map(it -> "?").collect(Collectors.joining(",")) + ")";
         return addSeg(AND, seg, values);
     }
 
-    public WhereBuilder eq(String column, Object... values) {
+    public WhereBuilder in(String column, Object... values) {
         return eq(column, Arrays.asList(values));
     }
 
