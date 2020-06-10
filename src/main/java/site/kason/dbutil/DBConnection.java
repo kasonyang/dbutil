@@ -108,9 +108,7 @@ public class DBConnection implements AutoCloseable {
 
     public List<Map<String, Object>> select(String table, Map<String,Object> conditions) throws SQLException {
         SelectBuilder sb = new SelectBuilder();
-        for (Map.Entry<String,Object> e : conditions.entrySet()) {
-            sb.eq(e.getKey(), e.getValue());
-        }
+        conditions.forEach(sb::eq);
         return select(table, sb);
     }
 
@@ -133,9 +131,7 @@ public class DBConnection implements AutoCloseable {
 
     public Map<String, Object> selectOne(String table, Map<String, Object> conditions) throws SQLException {
         SelectBuilder sb = new SelectBuilder();
-        for (Map.Entry<String, Object> e : conditions.entrySet()) {
-            sb.eq(e.getKey(), e.getValue());
-        }
+        conditions.forEach(sb::eq);
         return selectOne(table, sb);
     }
 
@@ -219,6 +215,12 @@ public class DBConnection implements AutoCloseable {
     public int delete(String table, Consumer<DeleteBuilder> deleteBuilderConsumer) throws SQLException {
         DeleteBuilder db = new DeleteBuilder();
         deleteBuilderConsumer.accept(db);
+        return delete(table, db);
+    }
+
+    public int delete(String table, Map<String,Object> conditions) throws SQLException {
+        DeleteBuilder db = new DeleteBuilder();
+        conditions.forEach(db::eq);
         return delete(table, db);
     }
 
