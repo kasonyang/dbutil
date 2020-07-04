@@ -106,7 +106,7 @@ public class DBConnection implements AutoCloseable {
         return select(table, sb);
     }
 
-    public List<Map<String, Object>> select(String table, Map<String,Object> conditions) throws SQLException {
+    public List<Map<String, Object>> select(String table, Map<String,?> conditions) throws SQLException {
         SelectBuilder sb = new SelectBuilder();
         conditions.forEach(sb::eq);
         return select(table, sb);
@@ -129,7 +129,7 @@ public class DBConnection implements AutoCloseable {
         return selectOne(table, sb);
     }
 
-    public Map<String, Object> selectOne(String table, Map<String, Object> conditions) throws SQLException {
+    public Map<String, Object> selectOne(String table, Map<String, ?> conditions) throws SQLException {
         SelectBuilder sb = new SelectBuilder();
         conditions.forEach(sb::eq);
         return selectOne(table, sb);
@@ -171,7 +171,7 @@ public class DBConnection implements AutoCloseable {
         insert(table, ib);
     }
 
-    public void insert(String table, Map<String,Object> fieldValues) throws SQLException {
+    public void insert(String table, Map<String, ?> fieldValues) throws SQLException {
         InsertBuilder ib = new InsertBuilder();
         ib.set(fieldValues);
         insert(table, ib);
@@ -189,7 +189,7 @@ public class DBConnection implements AutoCloseable {
         return insertAndGetGeneratedKeys(table, ib);
     }
 
-    public Map<String, Object> insertAndGetGeneratedKeys(String table, Map<String,Object> fieldValues) throws SQLException {
+    public Map<String, Object> insertAndGetGeneratedKeys(String table, Map<String, ?> fieldValues) throws SQLException {
         InsertBuilder ib = new InsertBuilder();
         ib.set(fieldValues);
         return insertAndGetGeneratedKeys(table, ib);
@@ -203,7 +203,7 @@ public class DBConnection implements AutoCloseable {
         return insertAndGetGeneratedKeys(table, insertBuilderConsumer).values().iterator().next();
     }
 
-    public Object insertAndGetKey(String table, Map<String,Object> fieldValues) throws SQLException {
+    public Object insertAndGetKey(String table, Map<String, ?> fieldValues) throws SQLException {
         return insertAndGetGeneratedKeys(table, fieldValues).values().iterator().next();
     }
 
@@ -218,7 +218,7 @@ public class DBConnection implements AutoCloseable {
         return delete(table, db);
     }
 
-    public int delete(String table, Map<String,Object> conditions) throws SQLException {
+    public int delete(String table, Map<String, ?> conditions) throws SQLException {
         DeleteBuilder db = new DeleteBuilder();
         conditions.forEach(db::eq);
         return delete(table, db);

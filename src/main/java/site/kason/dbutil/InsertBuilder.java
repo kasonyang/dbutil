@@ -15,7 +15,7 @@ public class InsertBuilder {
         return this;
     }
 
-    public InsertBuilder set(Map<String, Object> fieldValues) {
+    public InsertBuilder set(Map<String, ?> fieldValues) {
         this.fieldValues.putAll(fieldValues);
         return this;
     }
