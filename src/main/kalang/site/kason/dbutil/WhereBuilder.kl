@@ -1,17 +1,14 @@
-package site.kason.dbutil;
-
-import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * @author KasonYang
  */
-public class WhereBuilder {
+class {
 
-    private List<String> segments = new LinkedList<>();
+    private List<String> segments = new LinkedList();
 
-    private List<Object> bindings = new LinkedList<>();
+    private List<Object> bindings = new LinkedList();
 
     private final static String OR = "or";
 
@@ -21,15 +18,15 @@ public class WhereBuilder {
         return addSeg(AND, column + "=?", value);
     }
 
-    public WhereBuilder in(String column, Collection<Object> values) {
+    public WhereBuilder inList(String column, Collection<?> values) {
         if (values.isEmpty()) {
             throw new IllegalArgumentException("empty collection");
         }
-        String seg = column + " in (" + values.stream().map(it -> "?").collect(Collectors.joining(",")) + ")";
+        String seg = column + " in (" + values.stream().map(it => "?").collect(Collectors.joining(",")) + ")";
         return addSeg(AND, seg, values);
     }
 
-    public WhereBuilder in(String column, Object... values) {
+    public WhereBuilder inList(String column, Object... values) {
         return eq(column, Arrays.asList(values));
     }
 
@@ -53,8 +50,8 @@ public class WhereBuilder {
         return addSeg(AND, column + ">", value);
     }
 
-    public WhereBuilder notIn(String column, Collection<Object> values) {
-        String seg = column + " not in (" + values.stream().map(it -> "?").collect(Collectors.joining(",")) + ")";
+    public WhereBuilder notInList(String column, Collection<Object> values) {
+        String seg = column + " not in (" + values.stream().map(it => "?").collect(Collectors.joining(",")) + ")";
         return addSeg(AND, seg, values);
     }
 

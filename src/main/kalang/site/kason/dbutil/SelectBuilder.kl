@@ -1,5 +1,3 @@
-package site.kason.dbutil;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -8,11 +6,11 @@ import java.util.List;
 /**
  * @author KasonYang
  */
-public class SelectBuilder extends WhereBuilder {
+class extends WhereBuilder {
 
-    private List<String> orderByList = new LinkedList<>();
+    private List<String> orderByList = new LinkedList();
 
-    private List<String> groupByList = new LinkedList<>();
+    private List<String> groupByList = new LinkedList();
 
     private String selectFields = "*";
 
@@ -55,7 +53,7 @@ public class SelectBuilder extends WhereBuilder {
         return buildSql(table, selectFields);
     }
 
-    public Object[] buildBindings() {
+    override Object[] buildBindings() {
         return super.buildBindings();
     }
 

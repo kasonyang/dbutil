@@ -1,14 +1,12 @@
-package site.kason.dbutil;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author KasonYang
  */
-public class InsertBuilder {
+class {
 
-    private Map<String, Object> fieldValues = new LinkedHashMap<>();
+    private Map<String, Object> fieldValues = new LinkedHashMap();
 
     public InsertBuilder set(String column, Object value) {
         fieldValues.put(column, value);

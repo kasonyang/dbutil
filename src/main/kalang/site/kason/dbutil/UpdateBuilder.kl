@@ -1,13 +1,11 @@
-package site.kason.dbutil;
-
 import java.util.*;
 
 /**
  * @author KasonYang
  */
-public class UpdateBuilder extends WhereBuilder {
+class extends WhereBuilder {
 
-    private Map<String, Object> fieldValues = new LinkedHashMap<>();
+    private Map<String, Object> fieldValues = new LinkedHashMap();
 
     public UpdateBuilder set(String column, Object value) {
         fieldValues.put(column, value);
@@ -24,7 +22,7 @@ public class UpdateBuilder extends WhereBuilder {
             throw new IllegalStateException("update fields is empty");
         }
         StringBuilder setSegBuilder = new StringBuilder();
-        for (Map.Entry<String, Object> fv : fieldValues.entrySet()) {
+        for (fv in fieldValues.entrySet()) {
             setSegBuilder.append(fv.getKey()).append("=?,");
         }
         setSegBuilder.setLength(setSegBuilder.length() - 1);
@@ -34,8 +32,8 @@ public class UpdateBuilder extends WhereBuilder {
         return "update " + table + setSeg + whereSeg;
     }
 
-    public Object[] buildBindings() {
-        List<Object> bindings = new LinkedList<>();
+    override Object[] buildBindings() {
+        List<Object> bindings = new LinkedList();
         bindings.addAll(fieldValues.values());
         bindings.addAll(Arrays.asList(super.buildBindings()));
         return bindings.toArray();
