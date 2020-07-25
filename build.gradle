@@ -5,6 +5,7 @@ plugins {
 group 'site.kason'
 version '1.2-SNAPSHOT'
 
+apply from: 'gradle/kalang.gradle'
 apply from: 'gradle/maven-publish.gradle'
 
 sourceCompatibility = 1.8

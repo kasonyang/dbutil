@@ -1,0 +1,45 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "site.kason.kalang:kalang-compiler:1.9.1"
+    }
+}
+
+dependencies {
+    compile "site.kason.kalang:kalang-runtime:1.9.1"
+}
+
+sourceSets.main.allJava.srcDir("src/main/kalang");
+
+import kalang.compiler.shell.Kalangc;
+class kalang implements Plugin<Project> {
+    void cpKalang(project){
+        def klSrc = new File(project.projectDir,"src/main/kalang")
+        def outDir = new File(project.projectDir,"build/classes/java/main")
+        if(klSrc.exists()){
+            List<String> cps = new LinkedList();
+            for(f in project.configurations.compile.files){
+                cps.add(f.getAbsolutePath());
+            }
+            String cp = String.join(File.pathSeparator,cps);
+            def args = ["--output-dir",outDir.getAbsolutePath(),"--classpath",cp,klSrc.getAbsolutePath()];
+            int result = new Kalangc().run(args as String[])
+            if (result!=0){
+                throw new Exception("compile failed with exit code:${result}");
+            }
+        }
+    }
+    void apply(Project project) {
+        project.task('compileKalang').doLast{
+            cpKalang(project);
+        }
+    }
+}
+apply plugin:kalang
+compileJava.dependsOn compileKalang
+
+jar {
+    from "$buildDir/classes/kalang/main"
+}
