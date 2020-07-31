@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'site.kason'
-version '1.2-SNAPSHOT'
+version '2.0-SNAPSHOT'
 
 apply from: 'gradle/kalang.gradle'
 apply from: 'gradle/maven-publish.gradle'
