@@ -21,22 +21,19 @@ class extends WhereBuilder {
         if (fieldValues.isEmpty()) {
             throw new IllegalStateException("update fields is empty");
         }
-        StringBuilder setSegBuilder = new StringBuilder();
+        val setSegBuilder = new StringBuilder();
         for (fv in fieldValues.entrySet()) {
             setSegBuilder.append(fv.getKey()).append("=?,");
         }
         setSegBuilder.setLength(setSegBuilder.length() - 1);
-        String setSeg = " set " + setSegBuilder.toString() + " ";
-        String whereSql = super.buildSql();
-        String whereSeg = whereSql.trim().isEmpty() ? "" : (" where " + whereSql + " ");
+        val setSeg = " set " + setSegBuilder.toString() + " ";
+        val whereSql = super.buildSql();
+        val whereSeg = whereSql.trim().isEmpty() ? "" : (" where " + whereSql + " ");
         return "update " + table + setSeg + whereSeg;
     }
 
     override Object[] buildBindings() {
-        List<Object> bindings = new LinkedList();
-        bindings.addAll(fieldValues.values());
-        bindings.addAll(Arrays.asList(super.buildBindings()));
-        return bindings.toArray();
+        return fieldValues.values().toArray()..concat(super.buildBindings());
     }
 
 }

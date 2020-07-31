@@ -58,11 +58,11 @@ class extends WhereBuilder {
     }
 
     private String buildSql(String table, String fields) {
-        String where = super.buildSql();
-        String whereSeg = where.trim().isEmpty() ? "" : (" where " + where + " ");
-        String groupBySeg = groupByList.isEmpty() ? "" : (" group by " + String.join(",", groupByList) + " ");
-        String orderBySeg = orderByList.isEmpty() ? "" : (" order by " + String.join(",", orderByList) + " ");
-        String limitSeg = limit.trim().isEmpty() ? "" : (" limit " + limit);
+        val where = super.buildSql();
+        val whereSeg = where.trim().isEmpty() ? "" : (" where " + where + " ");
+        val groupBySeg = groupByList.isEmpty() ? "" : (" group by " + String.join(",", groupByList) + " ");
+        val orderBySeg = orderByList.isEmpty() ? "" : (" order by " + String.join(",", orderByList) + " ");
+        val limitSeg = limit.trim().isEmpty() ? "" : (" limit " + limit);
         return "select " + fields + " from " + table + whereSeg + groupBySeg + orderBySeg + limitSeg;
     }
 

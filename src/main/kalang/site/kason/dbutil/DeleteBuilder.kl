@@ -4,8 +4,8 @@
 class extends WhereBuilder {
 
     String buildSql(String table) {
-        String where = super.buildSql();
-        String whereSeg = where.trim().isEmpty() ? "" : (" where " + where + " ");
+        val where = super.buildSql();
+        val whereSeg = where.trim().isEmpty() ? "" : (" where " + where + " ");
         return "delete from " + table + whereSeg;
     }
 

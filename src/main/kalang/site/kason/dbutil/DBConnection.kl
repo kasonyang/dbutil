@@ -52,11 +52,11 @@ class implements AutoCloseable {
 
     public int execute(String sql, Object... params)  {
         if (params.length > 0) {
-            try (PreparedStatement stmt = prepareStatement(sql, params, false)) {
+            try (val stmt = prepareStatement(sql, params, false)) {
                 return stmt.executeUpdate();
             }
         } else {
-            try (Statement stmt = jdbc.createStatement()) {
+            try (val stmt = jdbc.createStatement()) {
                 return stmt.executeUpdate(sql);
             }
         }
@@ -64,13 +64,13 @@ class implements AutoCloseable {
 
     public List<Map<String, Object>> executeAndGetGeneratedKeys(String sql, Object... params)  {
         if (params.length > 0) {
-            try (PreparedStatement stmt = prepareStatement(sql, params, true)) {
+            try (val stmt = prepareStatement(sql, params, true)) {
                 stmt.executeUpdate();
-                ResultSet rs = stmt.getGeneratedKeys();
+                val rs = stmt.getGeneratedKeys();
                 return this.formatResultSet(rs);
             }
         } else {
-            try (Statement stmt = jdbc.createStatement()) {
+            try (val stmt = jdbc.createStatement()) {
                 stmt.executeUpdate(sql);
                 return formatResultSet(stmt.getGeneratedKeys());
             }
@@ -88,7 +88,7 @@ class implements AutoCloseable {
         } else {
             rs = jdbc.createStatement().executeQuery(sql);
         }
-        List<Map<String, Object>> list = formatResultSet(rs);
+        val list = formatResultSet(rs);
         rs.getStatement().close();
         return list;
     }
@@ -98,19 +98,19 @@ class implements AutoCloseable {
     }
 
     public List<Map<String, Object>> select(String table, Consumer<SelectBuilder> selectBuilderConsumer)  {
-        SelectBuilder sb = new SelectBuilder();
+        val sb = new SelectBuilder();
         selectBuilderConsumer.accept(sb);
         return select(table, sb);
     }
 
     public List<Map<String, Object>> select(String table, Map<String,?> conditions)  {
-        SelectBuilder sb = new SelectBuilder();
+        val sb = new SelectBuilder();
         conditions.forEach(sb::eq);
         return select(table, sb);
     }
 
-    public Map<String, Object> selectOne(String table, SelectBuilder selectBuilder)  {
-        List<Map<String, Object>> list = select(table, selectBuilder);
+    public Map<String, Object>? selectOne(String table, SelectBuilder selectBuilder)  {
+        val list = select(table, selectBuilder);
         if (list.isEmpty()) {
             return null;
         } else if (list.size() == 1) {
@@ -120,21 +120,21 @@ class implements AutoCloseable {
         }
     }
 
-    public Map<String, Object> selectOne(String table, Consumer<SelectBuilder> selectBuilderConsumer)  {
-        SelectBuilder sb = new SelectBuilder();
+    public Map<String, Object>? selectOne(String table, Consumer<SelectBuilder> selectBuilderConsumer)  {
+        val sb = new SelectBuilder();
         selectBuilderConsumer.accept(sb);
         return selectOne(table, sb);
     }
 
-    public Map<String, Object> selectOne(String table, Map<String, ?> conditions)  {
-        SelectBuilder sb = new SelectBuilder();
+    public Map<String, Object>? selectOne(String table, Map<String, ?> conditions)  {
+        val sb = new SelectBuilder();
         conditions.forEach(sb::eq);
         return selectOne(table, sb);
     }
 
     public long count(String table, SelectBuilder selectBuilder)  {
-        List<Map<String, Object>> res = query(selectBuilder.buildCount(table), selectBuilder.buildBindings());
-        Object count = res.get(0).get("count(*)");
+        val res = query(selectBuilder.buildCount(table), selectBuilder.buildBindings());
+        val count = res.get(0).get("count(*)");
         if (count instanceof Integer) {
             return ((Integer) count).longValue();
         }
@@ -142,7 +142,7 @@ class implements AutoCloseable {
     }
 
     public long count(String table, Consumer<SelectBuilder> selectBuilderConsumer)  {
-        SelectBuilder sb = new SelectBuilder();
+        val sb = new SelectBuilder();
         selectBuilderConsumer.accept(sb);
         return count(table, sb);
     }
@@ -152,42 +152,42 @@ class implements AutoCloseable {
     }
 
     public int update(String table, Consumer<UpdateBuilder> updateBuilderConsumer)  {
-        UpdateBuilder ub = new UpdateBuilder();
+        val ub = new UpdateBuilder();
         updateBuilderConsumer.accept(ub);
         return update(table, ub);
     }
 
     public void insert(String table, InsertBuilder insertBuilder)  {
-        int result = execute(insertBuilder.buildSql(table), insertBuilder.buildBindings());
+        val result = execute(insertBuilder.buildSql(table), insertBuilder.buildBindings());
         assert result == 1;
     }
 
     public void insert(String table, Consumer<InsertBuilder> insertBuilderConsumer)  {
-        InsertBuilder ib = new InsertBuilder();
+        val ib = new InsertBuilder();
         insertBuilderConsumer.accept(ib);
         insert(table, ib);
     }
 
     public void insert(String table, Map<String, ?> fieldValues)  {
-        InsertBuilder ib = new InsertBuilder();
+        val ib = new InsertBuilder();
         ib.set(fieldValues);
         insert(table, ib);
     }
 
     public Map<String,Object> insertAndGetGeneratedKeys(String table, InsertBuilder insertBuilder)  {
-        List<Map<String, Object>> result = executeAndGetGeneratedKeys(insertBuilder.buildSql(table), insertBuilder.buildBindings());
+        val result = executeAndGetGeneratedKeys(insertBuilder.buildSql(table), insertBuilder.buildBindings());
         assert result.size() == 1;
         return result.get(0);
     }
 
     public Map<String, Object> insertAndGetGeneratedKeys(String table, Consumer<InsertBuilder> insertBuilderConsumer)  {
-        InsertBuilder ib = new InsertBuilder();
+        val ib = new InsertBuilder();
         insertBuilderConsumer.accept(ib);
         return insertAndGetGeneratedKeys(table, ib);
     }
 
     public Map<String, Object> insertAndGetGeneratedKeys(String table, Map<String, ?> fieldValues)  {
-        InsertBuilder ib = new InsertBuilder();
+        val ib = new InsertBuilder();
         ib.set(fieldValues);
         return insertAndGetGeneratedKeys(table, ib);
     }
@@ -210,27 +210,27 @@ class implements AutoCloseable {
     }
 
     public int delete(String table, Consumer<DeleteBuilder> deleteBuilderConsumer)  {
-        DeleteBuilder db = new DeleteBuilder();
+        val db = new DeleteBuilder();
         deleteBuilderConsumer.accept(db);
         return delete(table, db);
     }
 
     public int delete(String table, Map<String, ?> conditions)  {
-        DeleteBuilder db = new DeleteBuilder();
+        val db = new DeleteBuilder();
         conditions.forEach(db::eq);
         return delete(table, db);
     }
 
     private List<Map<String, Object>> formatResultSet(ResultSet rs)  {
-        List<Map<String, Object>> list = new LinkedList();
-        ResultSetMetaData md = rs.getMetaData();
-        int cols = md.getColumnCount();
-        String[] colNames = new String[cols];
+        val list = new LinkedList<Map<String, Object>>();
+        val md = rs.getMetaData();
+        val cols = md.getColumnCount();
+        val colNames = new String[cols];
         for (int i = 0; i < cols; i++) {
             colNames[i] = md.getColumnName(i + 1);
         }
         while (rs.next()) {
-            Map<String, Object> it = new LinkedHashMap();
+            val it = new LinkedHashMap<String, Object>();
             for (int i = 0; i < cols; i++) {
                 it.put(colNames[i], rs.getObject(i + 1));
             }
@@ -241,9 +241,9 @@ class implements AutoCloseable {
 
     private PreparedStatement prepareStatement(String sql, Object[] params, boolean returnGeneratedKeys)  {
         if (params.length > 0) {
-            PreparedStatement stmt = jdbc.prepareStatement(sql, returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
+            val stmt = jdbc.prepareStatement(sql, returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
             for (int i = 0; i < params.length; i++) {
-                Object p = params[i];
+                val p = params[i];
                 stmt.setObject(i + 1, p);
             }
             return stmt;

@@ -22,7 +22,7 @@ class {
         if (fieldValues.isEmpty()) {
             throw new IllegalStateException("field values is empty");
         }
-        String fields = "(" + String.join(",", fieldValues.keySet()) + ")";
+        val fields = "(" + String.join(",", fieldValues.keySet()) + ")";
         char[] values = new char[fieldValues.size() * 2 + 1];
         values[0] = '(';
         for (int i = 1; i < values.length; i += 2) {
