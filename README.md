@@ -6,7 +6,7 @@ database utilities writing in kalang
 
 ### Gradle
 
-    compile 'site.kason:dbutil:2.0.0'
+    compile 'site.kason:dbutil:2.1.0'
     compile 'mysql:mysql-connector-java:6.0.3'
     
 # Usage
